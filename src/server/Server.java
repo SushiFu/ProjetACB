@@ -1,42 +1,13 @@
 package server;
 
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
+import server.adherent.ServerAdherents;
+import server.admin.ServerAdmins;
 
-public class Server implements Runnable
+public class Server
 {
-    private int port;
-    private ServerSocket serverSocket;
-
     public static void main(String[] args)
     {
-        new Server(3000);
-    }
-
-    public Server(int port)
-    {
-        this.port = port;
-        new Thread(this).start();
-    }
-
-    @Override
-    public void run()
-    {
-        try
-        {
-            serverSocket = new ServerSocket(port);
-            while (true)
-            {
-                Socket s = serverSocket.accept();
-
-            }
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-
-
+        new ServerAdherents(3000);
+        new ServerAdmins(4000);
     }
 }

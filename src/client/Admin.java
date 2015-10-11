@@ -7,7 +7,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
 
-public class Client implements Runnable
+public class Admin implements Runnable
 {
     private static final String END_MSG = "quit";
 
@@ -15,10 +15,10 @@ public class Client implements Runnable
 
     public static void main(String[] args)
     {
-        new Client(3000);
+        new Admin(4000);
     }
 
-    public Client(int port)
+    public Admin(int port)
     {
         this.port = port;
         new Thread(this).start();
@@ -34,7 +34,7 @@ public class Client implements Runnable
             PrintWriter pw = new PrintWriter(socket.getOutputStream(), true);
             Scanner sc = new Scanner(System.in);
             login(sc, br, pw);
-            inscrire(sc, br, pw);
+            gerer(sc, br, pw);
             sc.close();
             socket.close();
         }
@@ -60,7 +60,7 @@ public class Client implements Runnable
         } while (!connected);
     }
 
-    private void inscrire(Scanner sc, BufferedReader br, PrintWriter pw) throws IOException
+    private void gerer(Scanner sc, BufferedReader br, PrintWriter pw) throws IOException
     {
         for (; ;)
         {
@@ -68,9 +68,19 @@ public class Client implements Runnable
             System.out.print("Entrez le nom du cours ou quit: ");
             String res = sc.nextLine();
             pw.println(res);
+
             if (res.equals(END_MSG))
                 break;
+
+            boolean correct = Boolean.parseBoolean(br.readLine());
             System.out.println(br.readLine());
+            if (correct)
+            {
+                System.out.print("Entrez le nom de l'utilisateur a valide: ");
+                res = sc.nextLine();
+                pw.println(res);
+                System.out.println(br.readLine());
+            }
         }
     }
 }
