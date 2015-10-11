@@ -7,7 +7,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
 
-public class Client implements Runnable
+public class Utilisateur implements Runnable
 {
     private static final String END_MSG = "quit";
 
@@ -15,10 +15,10 @@ public class Client implements Runnable
 
     public static void main(String[] args)
     {
-        new Client(3000);
+        new Utilisateur(3000);
     }
 
-    public Client(int port)
+    public Utilisateur(int port)
     {
         this.port = port;
         new Thread(this).start();
@@ -65,7 +65,7 @@ public class Client implements Runnable
         for (; ;)
         {
             System.out.println(br.readLine());
-            System.out.print("Entrez le nom du cours ou quit: ");
+            System.out.print("Entrez le nom du COURS ou quit: ");
             String res = sc.nextLine();
             pw.println(res);
             if (res.equals(END_MSG))

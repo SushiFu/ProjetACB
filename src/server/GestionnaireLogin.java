@@ -1,13 +1,12 @@
 package server;
 
-import server.model.Adherent;
+import server.model.Utilisateur;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.List;
 
 public class GestionnaireLogin
 {
@@ -22,7 +21,7 @@ public class GestionnaireLogin
         this.socket = socket;
     }
 
-    public Adherent login()
+    public Utilisateur login()
     {
         try
         {
@@ -31,23 +30,26 @@ public class GestionnaireLogin
 
             for (; ; )
             {
-                Adherent adh = new Adherent(br.readLine(), br.readLine());
-                if (!RessourcePartage.adherents.contains(adh))
+                Utilisateur adh = new Utilisateur(br.readLine(), br.readLine());
+                synchronized (RessourcePartage.CONNECTED)
                 {
-                    pw.println(false);
-                    pw.println(EXISTE_PAS);
-                }
-                else if (RessourcePartage.connected.contains(adh))
-                {
-                    pw.println(false);
-                    pw.println(DEJA_CONNECTE);
-                }
-                else
-                {
-                    RessourcePartage.connected.add(adh);
-                    pw.println(true);
-                    pw.println(CONNEXION);
-                    return adh;
+                    if (!RessourcePartage.UTILISATEURS.contains(adh))
+                    {
+                        pw.println(false);
+                        pw.println(EXISTE_PAS);
+                    }
+                    else if (RessourcePartage.CONNECTED.contains(adh))
+                    {
+                        pw.println(false);
+                        pw.println(DEJA_CONNECTE);
+                    }
+                    else
+                    {
+                        RessourcePartage.CONNECTED.add(adh);
+                        pw.println(true);
+                        pw.println(CONNEXION);
+                        return adh;
+                    }
                 }
             }
         }

@@ -32,4 +32,12 @@ public class ServerAdmins implements Runnable
             e.printStackTrace();
         }
     }
+
+    @Override
+    protected void finalize() throws Throwable
+    {
+        if (serverSocket != null)
+            serverSocket.close();
+        super.finalize();
+    }
 }

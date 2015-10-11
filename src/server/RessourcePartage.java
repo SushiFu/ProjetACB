@@ -1,6 +1,6 @@
 package server;
 
-import server.model.Adherent;
+import server.model.Utilisateur;
 import server.model.Cours;
 
 import java.util.ArrayList;
@@ -9,32 +9,32 @@ import java.util.List;
 
 public class RessourcePartage
 {
-    public static final List<Adherent> adherents = Collections.synchronizedList(new ArrayList<>());
-    public static final List<Cours> cours = Collections.synchronizedList(new ArrayList<>());
-    public static final List<Adherent> connected = Collections.synchronizedList(new ArrayList<>());
+    public static final List<Utilisateur> UTILISATEURS = Collections.synchronizedList(new ArrayList<>());
+    public static final List<Cours> COURS = Collections.synchronizedList(new ArrayList<>());
+    public static final List<Utilisateur> CONNECTED = Collections.synchronizedList(new ArrayList<>());
 
     static
     {
-        adherents.add(new Adherent("test1", "1337"));
-        adherents.add(new Adherent("test2", "4242"));
-        adherents.add(new Adherent("test3", "42"));
+        UTILISATEURS.add(new Utilisateur("test1", "1337"));
+        UTILISATEURS.add(new Utilisateur("test2", "4242"));
+        UTILISATEURS.add(new Utilisateur("test3", "42"));
 
-        cours.add(new Cours("Math", 5));
-        cours.add(new Cours("Progra", 2));
-        cours.add(new Cours("Web", 3));
+        COURS.add(new Cours("Math", 5));
+        COURS.add(new Cours("Progra", 2));
+        COURS.add(new Cours("Web", 3));
     }
 
-    public static Adherent trouverAdherent(String id)
+    public static Utilisateur trouverAdherent(String id)
     {
-        for (Adherent adherent : adherents)
-            if (adherent.equals(id))
-                return adherent;
+        for (Utilisateur utilisateur : UTILISATEURS)
+            if (utilisateur.equals(id))
+                return utilisateur;
         return null;
     }
 
     public static Cours trouverCours(String nom)
     {
-        for (Cours cour : cours)
+        for (Cours cour : COURS)
             if (cour.equals(nom))
                 return cour;
         return null;

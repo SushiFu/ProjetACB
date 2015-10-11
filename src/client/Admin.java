@@ -65,7 +65,7 @@ public class Admin implements Runnable
         for (; ;)
         {
             System.out.println(br.readLine());
-            System.out.print("Entrez le nom du cours ou quit: ");
+            System.out.print("Entrez le nom du COURS ou quit: ");
             String res = sc.nextLine();
             pw.println(res);
 

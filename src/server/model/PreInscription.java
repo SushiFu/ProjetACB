@@ -8,13 +8,13 @@ public class PreInscription extends TimerTask
 {
     private static final long DAY = 1000L * 60L * 60L * 24L;
 
-    private Adherent adherent;
-    private ConcurrentHashMap<Adherent, PreInscription> preInscriptions;
+    private Utilisateur utilisateur;
+    private ConcurrentHashMap<Utilisateur, PreInscription> preInscriptions;
 
-    public PreInscription(Adherent adherent,
-                          ConcurrentHashMap<Adherent, PreInscription> preInscriptions)
+    public PreInscription(Utilisateur utilisateur,
+                          ConcurrentHashMap<Utilisateur, PreInscription> preInscriptions)
     {
-        this.adherent = adherent;
+        this.utilisateur = utilisateur;
         this.preInscriptions = preInscriptions;
         new Timer().schedule(this, DAY);
     }
@@ -22,7 +22,7 @@ public class PreInscription extends TimerTask
     @Override
     public void run()
     {
-        preInscriptions.remove(adherent);
+        preInscriptions.remove(utilisateur);
         this.cancel();
     }
 }

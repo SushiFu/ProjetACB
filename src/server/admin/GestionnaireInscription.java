@@ -1,7 +1,7 @@
 package server.admin;
 
 import server.RessourcePartage;
-import server.model.Adherent;
+import server.model.Utilisateur;
 import server.model.Cours;
 
 import java.io.BufferedReader;
@@ -13,15 +13,17 @@ import java.net.Socket;
 public class GestionnaireInscription
 {
     private static final String END_MSG = "quit";
-    private static final String COURS_INTROUVABLE = "Ce cours est introuvable";
+    private static final String COURS_INTROUVABLE = "Ce COURS est introuvable";
     private static final String INEXISTANT = "Cet id n'existe pas";
     private static final String VALIDE = "L'inscription a ete valide";
 
     private Socket socket;
+    private Utilisateur utilisateur;
 
-    public GestionnaireInscription(Socket socket)
+    public GestionnaireInscription(Socket socket, Utilisateur utilisateur)
     {
         this.socket = socket;
+        this.utilisateur = utilisateur;
     }
 
     public void gererInscriptions()
@@ -35,8 +37,15 @@ public class GestionnaireInscription
             {
                 envoyerCours(pw);
                 String res = br.readLine();
+
                 if (res.equals(END_MSG))
+                {
+                    RessourcePartage.CONNECTED.remove(utilisateur);
+                    br.close();
+                    pw.close();
                     break;
+                }
+
                 Cours cours = RessourcePartage.trouverCours(res);
                 if (cours == null)
                 {
@@ -46,7 +55,7 @@ public class GestionnaireInscription
                 else
                 {
                     pw.println(true);
-                    pw.println(cours.preinscritsName());
+                    pw.println(cours.preinscritsNoms());
                     String id = br.readLine();
                     gererInscription(RessourcePartage.trouverAdherent(id), cours, pw);
                 }
@@ -61,19 +70,19 @@ public class GestionnaireInscription
     private void envoyerCours(PrintWriter pw)
     {
         StringBuilder sb = new StringBuilder();
-        for (Cours cours : RessourcePartage.cours)
+        for (Cours cours : RessourcePartage.COURS)
             if (cours.preinscriptionsAttente())
-                sb.append(cours.toString()).append(" / ");
+                sb.append(cours.toStringPreInscrit()).append(" / ");
         pw.println(sb.toString());
     }
 
-    private void gererInscription(Adherent adherent, Cours cours, PrintWriter pw)
+    private void gererInscription(Utilisateur utilisateur, Cours cours, PrintWriter pw)
     {
-        if (adherent == null)
+        if (utilisateur == null)
             pw.println(INEXISTANT);
         else
         {
-            cours.ajouterInscription(adherent);
+            cours.ajouterInscription(utilisateur);
             pw.println(VALIDE);
         }
     }

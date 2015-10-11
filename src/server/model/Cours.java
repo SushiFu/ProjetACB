@@ -10,8 +10,8 @@ public class Cours
     private String nom;
     private int capacite;
 
-    private List<Adherent> inscrits;
-    private ConcurrentHashMap<Adherent, PreInscription> preInscriptions;
+    private List<Utilisateur> inscrits;
+    private ConcurrentHashMap<Utilisateur, PreInscription> preInscriptions;
 
     public Cours(String nom, int capacite)
     {
@@ -22,33 +22,33 @@ public class Cours
         preInscriptions = new ConcurrentHashMap<>();
     }
 
-    public boolean estPreinscrit(Adherent adherent)
+    public boolean estPreinscrit(Utilisateur utilisateur)
     {
-        return preInscriptions.containsKey(adherent);
+        return preInscriptions.containsKey(utilisateur);
     }
 
-    public boolean estInscrit(Adherent adherent)
+    public boolean estInscrit(Utilisateur utilisateur)
     {
-        return inscrits.contains(adherent);
+        return inscrits.contains(utilisateur);
     }
 
-    public boolean ajouterPreinscription(Adherent adherent)
+    public synchronized boolean ajouterPreinscription(Utilisateur utilisateur)
     {
-        if (!estPreinscrit(adherent) && !estInscrit(adherent) && !estComplet())
+        if (!estPreinscrit(utilisateur) && !estInscrit(utilisateur) && !estComplet())
         {
-            preInscriptions.put(adherent, new PreInscription(adherent, preInscriptions));
+            preInscriptions.put(utilisateur, new PreInscription(utilisateur, preInscriptions));
             return true;
         }
         return false;
     }
 
-    public void ajouterInscription(Adherent adherent)
+    public synchronized void ajouterInscription(Utilisateur utilisateur)
     {
-        preInscriptions.get(adherent).cancel();
-        preInscriptions.remove(adherent);
+        preInscriptions.get(utilisateur).cancel();
+        preInscriptions.remove(utilisateur);
 
-        if (!inscrits.contains(adherent))
-            inscrits.add(adherent);
+        if (!inscrits.contains(utilisateur))
+            inscrits.add(utilisateur);
     }
 
     public boolean estComplet()
@@ -84,11 +84,16 @@ public class Cours
                "inscrits";
     }
 
-    public String preinscritsName()
+    public String toStringPreInscrit()
+    {
+        return nom + " " + preInscriptions.size() + " preinscrits";
+    }
+
+    public String preinscritsNoms()
     {
         StringBuilder sb = new StringBuilder();
-        for (Adherent adherent : preInscriptions.keySet())
-            sb.append(adherent.toString()).append(" / ");
+        for (Utilisateur utilisateur : preInscriptions.keySet())
+            sb.append(utilisateur.toString()).append(" / ");
         return sb.toString();
     }
 }

@@ -1,7 +1,7 @@
 package server.admin;
 
 import server.GestionnaireLogin;
-import server.model.Adherent;
+import server.model.Utilisateur;
 
 import java.net.Socket;
 
@@ -18,8 +18,8 @@ public class GestionnaireAdmin implements Runnable
     @Override
     public void run()
     {
-        Adherent adh = new GestionnaireLogin(socket).login();
-        if (adh != null)
-            new GestionnaireInscription(socket).gererInscriptions();
+        Utilisateur utilisateur = new GestionnaireLogin(socket).login();
+        if (utilisateur != null)
+            new GestionnaireInscription(socket, utilisateur).gererInscriptions();
     }
 }

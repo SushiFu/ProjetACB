@@ -1,8 +1,8 @@
 package server.adherent;
 
 import server.RessourcePartage;
-import server.model.Adherent;
 import server.model.Cours;
+import server.model.Utilisateur;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,17 +14,17 @@ public class GestionnairePreInscription
 {
     private static final String END_MSG = "quit";
     private static final String ERROR = "La requete est invalide";
-    private static final String COURS_PLEIN = "Ce cours est complet";
-    private static final String DEJA_INSCRIT = "Vous etes deja inscrit ou preinscrit dans ce cours";
-    private static final String VALIDE = "Vous etes preinscrit pour le cours: ";
+    private static final String COURS_PLEIN = "Ce COURS est complet";
+    private static final String DEJA_INSCRIT = "Vous etes deja inscrit ou preinscrit dans ce COURS";
+    private static final String VALIDE = "Vous etes preinscrit pour le COURS: ";
 
     private Socket socket;
-    private Adherent adherent;
+    private Utilisateur utilisateur;
 
-    public GestionnairePreInscription(Socket socket, Adherent adh)
+    public GestionnairePreInscription(Socket socket, Utilisateur adh)
     {
         this.socket = socket;
-        this.adherent = adh;
+        this.utilisateur = adh;
     }
 
     public void inscrire()
@@ -33,27 +33,27 @@ public class GestionnairePreInscription
         {
             BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             PrintWriter pw = new PrintWriter(socket.getOutputStream(), true);
-
             for (; ; )
             {
                 envoyerCours(pw);
                 String res = br.readLine();
                 if (res.equals(END_MSG))
+                {
+                    RessourcePartage.CONNECTED.remove(utilisateur);
+                    br.close();
+                    pw.close();
                     break;
+                }
                 Cours cours = recupererCours(res, pw);
                 if (cours != null)
                 {
-                    boolean estAjouter = cours.ajouterPreinscription(adherent);
+                    boolean estAjouter = cours.ajouterPreinscription(utilisateur);
                     if (!estAjouter)
                         pw.println(DEJA_INSCRIT);
                     else
                         pw.println(VALIDE + cours.toString());
                 }
             }
-
-            br.close();
-            pw.close();
-            RessourcePartage.connected.remove(adherent);
         }
         catch (IOException e)
         {
@@ -64,7 +64,7 @@ public class GestionnairePreInscription
     private void envoyerCours(PrintWriter pw)
     {
         StringBuilder sb = new StringBuilder();
-        for (Cours cours : RessourcePartage.cours)
+        for (Cours cours : RessourcePartage.COURS)
             if (!cours.estComplet())
                 sb.append(cours.toString()).append(" / ");
         pw.println(sb.toString());
